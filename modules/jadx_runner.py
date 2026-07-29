@@ -2,21 +2,35 @@ import subprocess
 from pathlib import Path
 
 
-def run_jadx(config: dict) -> dict:
+def run_jadx(
+    config: dict
+) -> dict:
     """Run JADX on the target APK."""
 
-    apk_path = Path(config["apk_path"])
-    jadx_path = Path(config["jadx_path"])
-    output_dir = Path(config["output_dir"])
+    apk_path = Path(
+        config["apk_path"]
+    )
+
+    jadx_path = Path(
+        config["jadx_path"]
+    )
+
+    output_dir = Path(
+        config["output_dir"]
+    )
 
     if not apk_path.is_file():
+
         raise FileNotFoundError(
-            f"APK file not found:\n{apk_path}"
+            f"APK file not found:\n"
+            f"{apk_path}"
         )
 
     if not jadx_path.is_file():
+
         raise FileNotFoundError(
-            f"JADX executable not found:\n{jadx_path}"
+            f"JADX executable not found:\n"
+            f"{jadx_path}"
         )
 
     output_dir.mkdir(
@@ -26,14 +40,25 @@ def run_jadx(config: dict) -> dict:
 
     command = [
         str(jadx_path),
+
         "--output-dir",
+
         str(output_dir),
+
         str(apk_path)
     ]
 
-    print("[+] Running JADX...")
-    print(f"[+] APK: {apk_path}")
-    print(f"[+] Output: {output_dir}\n")
+    print(
+        f"  APK: {apk_path.name}"
+    )
+
+    print(
+        f"  Output: {output_dir}"
+    )
+
+    print(
+        "  Running JADX..."
+    )
 
     result = subprocess.run(
         command,
@@ -43,33 +68,36 @@ def run_jadx(config: dict) -> dict:
 
     output_created = (
         output_dir.exists()
-        and any(output_dir.iterdir())
+        and any(
+            output_dir.iterdir()
+        )
     )
 
     if result.returncode == 0:
 
-        print(
-            "[+] JADX completed successfully."
-        )
-
         return {
             "status": "success",
-            "exit_code": result.returncode
+
+            "exit_code": (
+                result.returncode
+            )
         }
 
     if output_created:
 
-        print(
-            "[+] JADX completed with warnings."
-        )
-
         return {
-            "status": "completed_with_warnings",
-            "exit_code": result.returncode
+            "status": (
+                "completed_with_warnings"
+            ),
+
+            "exit_code": (
+                result.returncode
+            )
         }
 
     raise RuntimeError(
         "JADX failed and no output "
-        f"was created. Exit code: "
+        "was created. "
+        f"Exit code: "
         f"{result.returncode}"
     )
