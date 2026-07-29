@@ -5,6 +5,7 @@ from pathlib import Path
 from modules.apk_info import get_apk_info
 from modules.components import get_components
 from modules.jadx_runner import run_jadx
+from modules.network import get_network_indicators
 from modules.permissions import get_permissions
 
 
@@ -195,12 +196,13 @@ def print_error(
 def print_summary(
     apk_info: dict,
     permissions: dict,
-    components: dict
+    components: dict,
+    network: dict
 ):
     """Print the analysis summary."""
 
     print_section(
-        5,
+        7,
         "Analysis Summary"
     )
 
@@ -258,6 +260,27 @@ def print_summary(
         f"  Exported components:"
         f"{Colors.RESET}"
         f" {components['exported_component_count']}"
+    )
+
+    print(
+        f"{Colors.WHITE}"
+        f"  URLs:"
+        f"{Colors.RESET}"
+        f" {network['url_count']}"
+    )
+
+    print(
+        f"{Colors.WHITE}"
+        f"  Domains:"
+        f"{Colors.RESET}"
+        f" {network['domain_count']}"
+    )
+
+    print(
+        f"{Colors.WHITE}"
+        f"  IPv4 addresses:"
+        f"{Colors.RESET}"
+        f" {network['ipv4_count']}"
     )
 
 
@@ -467,6 +490,45 @@ def main():
         f"{components['exported_component_count']}"
     )
 
+    print_section(
+        5,
+        "Network Indicator Extraction"
+    )
+
+    print_info(
+        "Scanning Decompiled Java code..."
+    )
+
+    network = (
+        get_network_indicators(
+            config
+        )
+    )
+
+    print_success(
+        "Network indicators extracted."
+    )
+
+    print_info(
+        f"URLs: "
+        f"{network['url_count']}"
+    )
+
+    print_info(
+        f"Domains: "
+        f"{network['domain_count']}"
+    )
+
+    print_info(
+        f"IPv4 addresses: "
+        f"{network['ipv4_count']}"
+    )
+
+    print_section(
+        6,
+        "Saving Results"
+    )
+
     result = {
         "jadx": jadx_result,
 
@@ -474,13 +536,10 @@ def main():
 
         "permissions": permissions,
 
-        "components": components
-    }
+        "components": components,
 
-    print_section(
-        5,
-        "Saving Results"
-    )
+        "network": network
+    }
 
     print_info(
         "Writing analysis result..."
@@ -497,7 +556,8 @@ def main():
     print_summary(
         apk_info,
         permissions,
-        components
+        components,
+        network
     )
 
     print()
