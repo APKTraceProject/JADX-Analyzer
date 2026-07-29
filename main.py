@@ -3,6 +3,7 @@ import sys
 from pathlib import Path
 
 from modules.apk_info import get_apk_info
+from modules.code_analysis import analyze_java_code
 from modules.components import get_components
 from modules.jadx_runner import run_jadx
 from modules.network import get_network_indicators
@@ -59,45 +60,44 @@ RESULT_FILE = (
 # =========================
 
 def print_banner():
-    """Print the APKTrace banner."""
 
     print()
 
     print(
         f"{Colors.DARK_BLUE}"
         f"{Colors.BOLD}"
-        f"╔══════════════════════════════════════════════╗"
+        "╔══════════════════════════════════════════════╗"
         f"{Colors.RESET}"
     )
 
     print(
         f"{Colors.DARK_BLUE}"
         f"{Colors.BOLD}"
-        f"║"
+        "║"
         f"{Colors.RESET}"
         f"{Colors.BLUE}"
         f"{Colors.BOLD}"
-        f"              APKTrace"
+        "              APKTrace"
         f"{Colors.RESET}"
         f"{Colors.WHITE}"
-        f"  |  JADX Analyzer"
+        "  |  JADX Analyzer"
         f"{Colors.RESET}"
         f"{Colors.DARK_BLUE}"
         f"{Colors.BOLD}"
-        f"       ║"
+        "       ║"
         f"{Colors.RESET}"
     )
 
     print(
         f"{Colors.DARK_BLUE}"
         f"{Colors.BOLD}"
-        f"╚══════════════════════════════════════════════╝"
+        "╚══════════════════════════════════════════════╝"
         f"{Colors.RESET}"
     )
 
     print(
         f"{Colors.GRAY}"
-        f"  Android APK Static Analysis"
+        "  Android APK Static Analysis"
         f"{Colors.RESET}"
     )
 
@@ -108,14 +108,13 @@ def print_section(
     number: int,
     title: str
 ):
-    """Print an analysis section."""
 
     print()
 
     print(
         f"{Colors.DARK_BLUE}"
         f"{Colors.BOLD}"
-        f"────────────────────────────────────────────────"
+        "────────────────────────────────────────────────"
         f"{Colors.RESET}"
     )
 
@@ -133,7 +132,7 @@ def print_section(
     print(
         f"{Colors.DARK_BLUE}"
         f"{Colors.BOLD}"
-        f"────────────────────────────────────────────────"
+        "────────────────────────────────────────────────"
         f"{Colors.RESET}"
     )
 
@@ -141,11 +140,10 @@ def print_section(
 def print_info(
     message: str
 ):
-    """Print an information message."""
 
     print(
         f"{Colors.GRAY}"
-        f"  [INFO]"
+        "  [INFO]"
         f"{Colors.RESET}"
         f" {message}"
     )
@@ -154,12 +152,11 @@ def print_info(
 def print_success(
     message: str
 ):
-    """Print a success message."""
 
     print(
         f"{Colors.GREEN}"
         f"{Colors.BOLD}"
-        f"  [SUCCESS]"
+        "  [SUCCESS]"
         f"{Colors.RESET}"
         f" {message}"
     )
@@ -168,12 +165,11 @@ def print_success(
 def print_warning(
     message: str
 ):
-    """Print a warning message."""
 
     print(
         f"{Colors.YELLOW}"
         f"{Colors.BOLD}"
-        f"  [WARNING]"
+        "  [WARNING]"
         f"{Colors.RESET}"
         f" {message}"
     )
@@ -182,12 +178,11 @@ def print_warning(
 def print_error(
     message: str
 ):
-    """Print an error message."""
 
     print(
         f"{Colors.RED}"
         f"{Colors.BOLD}"
-        f"  [ERROR]"
+        "  [ERROR]"
         f"{Colors.RESET}"
         f" {message}"
     )
@@ -197,90 +192,62 @@ def print_summary(
     apk_info: dict,
     permissions: dict,
     components: dict,
-    network: dict
+    network: dict,
+    code_analysis: dict
 ):
-    """Print the analysis summary."""
 
     print_section(
-        7,
+        8,
         "Analysis Summary"
     )
 
-    print(
-        f"{Colors.WHITE}"
-        f"  Package:"
-        f"{Colors.RESET}"
-        f" {apk_info['package_name']}"
+    print_info(
+        f"Package: "
+        f"{apk_info['package_name']}"
     )
 
-    print(
-        f"{Colors.WHITE}"
-        f"  APK size:"
-        f"{Colors.RESET}"
-        f" {apk_info['file_size_bytes']:,} bytes"
+    print_info(
+        f"Requested permissions: "
+        f"{permissions['requested_count']}"
     )
 
-    print(
-        f"{Colors.WHITE}"
-        f"  Requested permissions:"
-        f"{Colors.RESET}"
-        f" {permissions['requested_count']}"
+    print_info(
+        f"Exported components: "
+        f"{components['exported_component_count']}"
     )
 
-    print(
-        f"{Colors.WHITE}"
-        f"  Activities:"
-        f"{Colors.RESET}"
-        f" {components['activity_count']}"
+    print_info(
+        f"URLs: "
+        f"{network['url_count']}"
     )
 
-    print(
-        f"{Colors.WHITE}"
-        f"  Services:"
-        f"{Colors.RESET}"
-        f" {components['service_count']}"
+    print_info(
+        f"Domains: "
+        f"{network['domain_count']}"
     )
 
-    print(
-        f"{Colors.WHITE}"
-        f"  Broadcast receivers:"
-        f"{Colors.RESET}"
-        f" {components['receiver_count']}"
+    print_info(
+        f"IPv4 addresses: "
+        f"{network['ipv4_count']}"
     )
 
-    print(
-        f"{Colors.WHITE}"
-        f"  Content providers:"
-        f"{Colors.RESET}"
-        f" {components['provider_count']}"
+    print_info(
+        f"Security findings: "
+        f"{code_analysis['finding_count']}"
     )
 
-    print(
-        f"{Colors.WHITE}"
-        f"  Exported components:"
-        f"{Colors.RESET}"
-        f" {components['exported_component_count']}"
+    severity_counts = (
+        code_analysis[
+            "severity_counts"
+        ]
     )
 
-    print(
-        f"{Colors.WHITE}"
-        f"  URLs:"
-        f"{Colors.RESET}"
-        f" {network['url_count']}"
-    )
-
-    print(
-        f"{Colors.WHITE}"
-        f"  Domains:"
-        f"{Colors.RESET}"
-        f" {network['domain_count']}"
-    )
-
-    print(
-        f"{Colors.WHITE}"
-        f"  IPv4 addresses:"
-        f"{Colors.RESET}"
-        f" {network['ipv4_count']}"
+    print_info(
+        "Findings by severity: "
+        f"High={severity_counts['high']}, "
+        f"Medium={severity_counts['medium']}, "
+        f"Low={severity_counts['low']}, "
+        f"Info={severity_counts['info']}"
     )
 
 
@@ -289,7 +256,6 @@ def print_summary(
 # =========================
 
 def load_config() -> dict:
-    """Load the project configuration."""
 
     if not CONFIG_FILE.is_file():
 
@@ -318,8 +284,7 @@ def load_config() -> dict:
         if key not in config:
 
             raise KeyError(
-                f"Missing config key: "
-                f"{key}"
+                f"Missing config key: {key}"
             )
 
     return config
@@ -332,7 +297,6 @@ def load_config() -> dict:
 def save_result(
     result: dict
 ):
-    """Save the analysis result."""
 
     RESULT_FILE.parent.mkdir(
         parents=True,
@@ -399,10 +363,6 @@ def main():
         "APK Metadata Extraction"
     )
 
-    print_info(
-        "Reading APK metadata..."
-    )
-
     apk_info = get_apk_info(
         config
     )
@@ -416,18 +376,9 @@ def main():
         f"{apk_info['package_name']}"
     )
 
-    print_info(
-        f"Version: "
-        f"{apk_info['version_name']}"
-    )
-
     print_section(
         3,
         "Permission Extraction"
-    )
-
-    print_info(
-        "Reading Android permissions..."
     )
 
     permissions = get_permissions(
@@ -443,18 +394,9 @@ def main():
         f"{permissions['requested_count']}"
     )
 
-    print_info(
-        f"App-defined: "
-        f"{permissions['defined_count']}"
-    )
-
     print_section(
         4,
         "Android Component Extraction"
-    )
-
-    print_info(
-        "Reading application components..."
     )
 
     components = get_components(
@@ -466,26 +408,6 @@ def main():
     )
 
     print_info(
-        f"Activities: "
-        f"{components['activity_count']}"
-    )
-
-    print_info(
-        f"Services: "
-        f"{components['service_count']}"
-    )
-
-    print_info(
-        f"Receivers: "
-        f"{components['receiver_count']}"
-    )
-
-    print_info(
-        f"Providers: "
-        f"{components['provider_count']}"
-    )
-
-    print_info(
         f"Exported components: "
         f"{components['exported_component_count']}"
     )
@@ -493,10 +415,6 @@ def main():
     print_section(
         5,
         "Network Indicator Extraction"
-    )
-
-    print_info(
-        "Scanning Decompiled Java code..."
     )
 
     network = (
@@ -526,6 +444,61 @@ def main():
 
     print_section(
         6,
+        "Java Security Analysis"
+    )
+
+    print_info(
+        "Scanning Decompiled Java code..."
+    )
+
+    code_analysis = (
+        analyze_java_code(
+            config
+        )
+    )
+
+    print_success(
+        "Java security analysis completed."
+    )
+
+    print_info(
+        f"Java files scanned: "
+        f"{code_analysis['scanned_java_file_count']}"
+    )
+
+    print_info(
+        f"Security findings: "
+        f"{code_analysis['finding_count']}"
+    )
+
+    severity_counts = (
+        code_analysis[
+            "severity_counts"
+        ]
+    )
+
+    print_info(
+        f"High: "
+        f"{severity_counts['high']}"
+    )
+
+    print_info(
+        f"Medium: "
+        f"{severity_counts['medium']}"
+    )
+
+    print_info(
+        f"Low: "
+        f"{severity_counts['low']}"
+    )
+
+    print_info(
+        f"Info: "
+        f"{severity_counts['info']}"
+    )
+
+    print_section(
+        7,
         "Saving Results"
     )
 
@@ -538,12 +511,12 @@ def main():
 
         "components": components,
 
-        "network": network
-    }
+        "network": network,
 
-    print_info(
-        "Writing analysis result..."
-    )
+        "code_analysis": (
+            code_analysis
+        )
+    }
 
     save_result(
         result
@@ -557,7 +530,8 @@ def main():
         apk_info,
         permissions,
         components,
-        network
+        network,
+        code_analysis
     )
 
     print()
@@ -565,13 +539,13 @@ def main():
     print(
         f"{Colors.GREEN}"
         f"{Colors.BOLD}"
-        f"  Analysis completed successfully."
+        "  Analysis completed successfully."
         f"{Colors.RESET}"
     )
 
     print(
         f"{Colors.GRAY}"
-        f"  Result:"
+        "  Result:"
         f"{Colors.RESET}"
         f" {RESULT_FILE}"
     )
