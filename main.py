@@ -1,122 +1,97 @@
 import json
-import subprocess
 import sys
 from pathlib import Path
+
+from modules.apk_info import get_apk_info
+from modules.jadx_runner import run_jadx
 
 
 # =========================
 # CONFIGURATION
 # =========================
 
-CONFIG_FILE = Path("config.json")
+BASE_DIR = Path(
+    __file__
+).resolve().parent
+
+CONFIG_FILE = (
+    BASE_DIR
+    / "config.json"
+)
+
+RESULT_FILE = (
+    BASE_DIR
+    / "output"
+    / "analysis_result.json"
+)
 
 
-def load_config():
-    """Load paths from the config file."""
+# =========================
+# CONFIG
+# =========================
+
+def load_config() -> dict:
+    """Load the project configuration."""
 
     if not CONFIG_FILE.is_file():
+
         raise FileNotFoundError(
-            f"Config file not found:\n{CONFIG_FILE}"
+            f"Config file not found:\n"
+            f"{CONFIG_FILE}"
         )
 
     with CONFIG_FILE.open(
         "r",
         encoding="utf-8"
     ) as file:
-        config = json.load(file)
 
-    return (
-        Path(config["apk_path"]),
-        Path(config["jadx_path"]),
-        Path(config["output_dir"])
-    )
-
-
-APK_PATH, JADX_PATH, OUTPUT_DIR = load_config()
-
-# =========================
-# VALIDATION
-# =========================
-
-def validate_paths():
-    """Check required paths."""
-
-    if not APK_PATH.is_file():
-        raise FileNotFoundError(
-            f"APK file not found:\n{APK_PATH}"
+        config = json.load(
+            file
         )
 
-    if not JADX_PATH.is_file():
-        raise FileNotFoundError(
-            f"JADX executable not found:\n{JADX_PATH}"
-        )
+    required_keys = [
+        "apk_path",
+        "jadx_path",
+        "output_dir"
+    ]
+
+    for key in required_keys:
+
+        if key not in config:
+
+            raise KeyError(
+                f"Missing config key: "
+                f"{key}"
+            )
+
+    return config
 
 
 # =========================
-# JADX
+# OUTPUT
 # =========================
 
-def run_jadx():
-    """Run JADX on the APK."""
+def save_result(
+    result: dict
+):
+    """Save the analysis result."""
 
-    OUTPUT_DIR.mkdir(
+    RESULT_FILE.parent.mkdir(
         parents=True,
         exist_ok=True
     )
 
-    command = [
-        str(JADX_PATH),
-        "--output-dir",
-        str(OUTPUT_DIR),
-        str(APK_PATH)
-    ]
+    with RESULT_FILE.open(
+        "w",
+        encoding="utf-8"
+    ) as file:
 
-    print("[+] Running JADX...")
-    print(f"[+] APK: {APK_PATH}")
-    print(f"[+] Output: {OUTPUT_DIR}\n")
-
-    result = subprocess.run(
-        command,
-        stdout=subprocess.DEVNULL,
-        stderr=subprocess.DEVNULL
-    )
-
-    output_created = (
-        OUTPUT_DIR.exists()
-        and any(OUTPUT_DIR.iterdir())
-    )
-
-    if result.returncode == 0:
-
-        print(
-            "[+] JADX completed successfully."
+        json.dump(
+            result,
+            file,
+            ensure_ascii=False,
+            indent=4
         )
-
-    elif output_created:
-
-        print(
-            "[+] JADX completed successfully."
-        )
-
-        print(
-            "[+] Decompiled output was created."
-        )
-
-    else:
-
-        raise RuntimeError(
-            "JADX failed and no output "
-            f"was created. Exit code: "
-            f"{result.returncode}"
-        )
-
-    print(
-        "\n[+] Output directory:"
-    )
-
-    print(
-        OUTPUT_DIR.resolve()
-    )
 
 
 # =========================
@@ -125,11 +100,48 @@ def run_jadx():
 
 def main():
 
+    config = load_config()
+
+    jadx_result = run_jadx(
+        config
+    )
+
+    print(
+        "\n[+] Extracting APK information..."
+    )
+
+    apk_info = get_apk_info(
+        config
+    )
+
+    result = {
+        "jadx": jadx_result,
+
+        "apk_info": apk_info
+    }
+
+    save_result(
+        result
+    )
+
+    print(
+        "[+] APK information extracted."
+    )
+
+    print(
+        "\n[+] Result file:"
+    )
+
+    print(
+        RESULT_FILE
+    )
+
+
+if __name__ == "__main__":
+
     try:
 
-        validate_paths()
-
-        run_jadx()
+        main()
 
     except Exception as error:
 
@@ -138,8 +150,3 @@ def main():
         )
 
         sys.exit(1)
-
-
-if __name__ == "__main__":
-
-    main()

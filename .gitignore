@@ -1,1 +1,11 @@
 config.json
+
+*.apk
+
+jadx_output/
+
+output/analysis_result.json
+
+__pycache__/
+modules/__pycache__/
+README.md
