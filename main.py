@@ -4,6 +4,7 @@ from pathlib import Path
 
 from modules.apk_info import get_apk_info
 from modules.jadx_runner import run_jadx
+from modules.permissions import get_permissions
 
 
 # =========================
@@ -114,10 +115,28 @@ def main():
         config
     )
 
+    print(
+        "[+] APK information extracted."
+    )
+
+    print(
+        "\n[+] Extracting permissions..."
+    )
+
+    permissions = get_permissions(
+        config
+    )
+
+    print(
+        "[+] Permissions extracted."
+    )
+
     result = {
         "jadx": jadx_result,
 
-        "apk_info": apk_info
+        "apk_info": apk_info,
+
+        "permissions": permissions
     }
 
     save_result(
@@ -125,11 +144,11 @@ def main():
     )
 
     print(
-        "[+] APK information extracted."
+        "\n[+] Analysis completed."
     )
 
     print(
-        "\n[+] Result file:"
+        "[+] Result file:"
     )
 
     print(
