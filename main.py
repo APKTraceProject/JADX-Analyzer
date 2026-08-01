@@ -188,12 +188,16 @@ def print_error(
     )
 
 
+# =========================
+# ANALYSIS SUMMARY
+# =========================
+
 def print_summary(
     apk_info: dict,
     permissions: dict,
     components: dict,
     network: dict,
-    code_analysis: dict
+    java_analysis: dict
 ):
 
     print_section(
@@ -201,20 +205,61 @@ def print_summary(
         "Analysis Summary"
     )
 
+    # -------------------------
+    # APK INFORMATION
+    # -------------------------
+
     print_info(
         f"Package: "
         f"{apk_info['package_name']}"
     )
 
     print_info(
+        f"APK size: "
+        f"{apk_info['file_size_bytes']:,} bytes"
+    )
+
+    # -------------------------
+    # PERMISSIONS
+    # -------------------------
+
+    print_info(
         f"Requested permissions: "
         f"{permissions['requested_count']}"
+    )
+
+    # -------------------------
+    # COMPONENTS
+    # -------------------------
+
+    print_info(
+        f"Activities: "
+        f"{components['activity_count']}"
+    )
+
+    print_info(
+        f"Services: "
+        f"{components['service_count']}"
+    )
+
+    print_info(
+        f"Broadcast receivers: "
+        f"{components['receiver_count']}"
+    )
+
+    print_info(
+        f"Content providers: "
+        f"{components['provider_count']}"
     )
 
     print_info(
         f"Exported components: "
         f"{components['exported_component_count']}"
     )
+
+    # -------------------------
+    # NETWORK INDICATORS
+    # -------------------------
 
     print_info(
         f"URLs: "
@@ -231,23 +276,49 @@ def print_summary(
         f"{network['ipv4_count']}"
     )
 
-    print_info(
-        f"Security findings: "
-        f"{code_analysis['finding_count']}"
-    )
+    # -------------------------
+    # JAVA ANALYSIS
+    # -------------------------
 
-    severity_counts = (
-        code_analysis[
-            "severity_counts"
+    java_statistics = (
+        java_analysis[
+            "statistics"
         ]
     )
 
     print_info(
-        "Findings by severity: "
-        f"High={severity_counts['high']}, "
-        f"Medium={severity_counts['medium']}, "
-        f"Low={severity_counts['low']}, "
-        f"Info={severity_counts['info']}"
+        f"Java files scanned: "
+        f"{java_statistics['java_files_scanned']}"
+    )
+
+    print_info(
+        f"Classes detected: "
+        f"{java_statistics['classes_detected']}"
+    )
+
+    print_info(
+        f"Behavior types detected: "
+        f"{java_statistics['behavior_types_detected']}"
+    )
+
+    print_info(
+        f"Behavior occurrences: "
+        f"{java_statistics['behavior_occurrences']}"
+    )
+
+    print_info(
+        f"Important source files: "
+        f"{java_statistics['important_sources']}"
+    )
+
+    print_info(
+        f"Component correlations: "
+        f"{java_statistics['component_correlations']}"
+    )
+
+    print_info(
+        f"Permission correlations: "
+        f"{java_statistics['permission_correlations']}"
     )
 
 
@@ -324,6 +395,10 @@ def main():
 
     print_banner()
 
+    # ---------------------
+    # Configuration
+    # ---------------------
+
     print_info(
         "Loading project configuration..."
     )
@@ -333,6 +408,10 @@ def main():
     print_success(
         "Configuration loaded."
     )
+
+    # ---------------------
+    # JADX Decompilation
+    # ---------------------
 
     print_section(
         1,
@@ -358,9 +437,17 @@ def main():
             "JADX completed with warnings."
         )
 
+    # ---------------------
+    # APK Metadata
+    # ---------------------
+
     print_section(
         2,
         "APK Metadata Extraction"
+    )
+
+    print_info(
+        "Reading APK metadata..."
     )
 
     apk_info = get_apk_info(
@@ -376,9 +463,22 @@ def main():
         f"{apk_info['package_name']}"
     )
 
+    print_info(
+        f"Version: "
+        f"{apk_info['version_name']}"
+    )
+
+    # ---------------------
+    # Permissions
+    # ---------------------
+
     print_section(
         3,
         "Permission Extraction"
+    )
+
+    print_info(
+        "Reading Android permissions..."
     )
 
     permissions = get_permissions(
@@ -394,9 +494,22 @@ def main():
         f"{permissions['requested_count']}"
     )
 
+    print_info(
+        f"App-defined: "
+        f"{permissions['defined_count']}"
+    )
+
+    # ---------------------
+    # Android Components
+    # ---------------------
+
     print_section(
         4,
         "Android Component Extraction"
+    )
+
+    print_info(
+        "Reading application components..."
     )
 
     components = get_components(
@@ -408,13 +521,41 @@ def main():
     )
 
     print_info(
+        f"Activities: "
+        f"{components['activity_count']}"
+    )
+
+    print_info(
+        f"Services: "
+        f"{components['service_count']}"
+    )
+
+    print_info(
+        f"Receivers: "
+        f"{components['receiver_count']}"
+    )
+
+    print_info(
+        f"Providers: "
+        f"{components['provider_count']}"
+    )
+
+    print_info(
         f"Exported components: "
         f"{components['exported_component_count']}"
     )
 
+    # ---------------------
+    # Network Indicators
+    # ---------------------
+
     print_section(
         5,
         "Network Indicator Extraction"
+    )
+
+    print_info(
+        "Scanning Decompiled Java code..."
     )
 
     network = (
@@ -442,64 +583,85 @@ def main():
         f"{network['ipv4_count']}"
     )
 
+    # ---------------------
+    # Java Analysis
+    # ---------------------
+
     print_section(
         6,
         "Java Security Analysis"
     )
 
     print_info(
-        "Scanning Decompiled Java code..."
+        "Building a lightweight Java behavior map..."
     )
 
-    code_analysis = (
-        analyze_java_code(
-            config
-        )
+    java_analysis = analyze_java_code(
+        config,
+        apk_info,
+        permissions,
+        components
     )
+
 
     print_success(
-        "Java security analysis completed."
+        "Java analysis completed."
     )
 
-    print_info(
-        f"Java files scanned: "
-        f"{code_analysis['scanned_java_file_count']}"
-    )
-
-    print_info(
-        f"Security findings: "
-        f"{code_analysis['finding_count']}"
-    )
-
-    severity_counts = (
-        code_analysis[
-            "severity_counts"
+    java_statistics = (
+        java_analysis[
+            "statistics"
         ]
     )
 
     print_info(
-        f"High: "
-        f"{severity_counts['high']}"
+        f"Java files scanned: "
+        f"{java_statistics['java_files_scanned']}"
     )
 
     print_info(
-        f"Medium: "
-        f"{severity_counts['medium']}"
+        f"Classes detected: "
+        f"{java_statistics['classes_detected']}"
     )
 
     print_info(
-        f"Low: "
-        f"{severity_counts['low']}"
+        f"Behavior types: "
+        f"{java_statistics['behavior_types_detected']}"
     )
 
     print_info(
-        f"Info: "
-        f"{severity_counts['info']}"
+        f"Behavior occurrences: "
+        f"{java_statistics['behavior_occurrences']}"
     )
+
+    print_info(
+        f"Important source files: "
+        f"{java_statistics['important_sources']}"
+    )
+
+    print_info(
+        f"Component correlations: "
+        f"{java_statistics['component_correlations']}"
+    )
+
+    print_info(
+        f"Permission correlations: "
+        f"{java_statistics['permission_correlations']}"
+    )
+
+
+
+    # ---------------------
+    # Save Results
+    # ---------------------
 
     print_section(
         7,
         "Saving Results"
+    )
+
+    print_info(
+        "Writing analysis result..."
     )
 
     result = {
@@ -513,8 +675,8 @@ def main():
 
         "network": network,
 
-        "code_analysis": (
-            code_analysis
+        "java_analysis": (
+            java_analysis
         )
     }
 
@@ -526,12 +688,16 @@ def main():
         "Analysis result saved."
     )
 
+    # ---------------------
+    # Final Summary
+    # ---------------------
+
     print_summary(
         apk_info,
         permissions,
         components,
         network,
-        code_analysis
+        java_analysis
     )
 
     print()
