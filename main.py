@@ -48,7 +48,7 @@ CONFIG_FILE = (
     / "config.json"
 )
 
-RESULT_FILE = (
+DEFAULT_RESULT_FILE = (
     BASE_DIR
     / "output"
     / "analysis_result.json"
@@ -358,6 +358,16 @@ def load_config() -> dict:
                 f"Missing config key: {key}"
             )
 
+    result_file = get_result_file(
+        config
+    )
+
+    config[
+        "analysis_result_path"
+    ] = str(
+        result_file
+    )
+
     return config
 
 
@@ -365,16 +375,38 @@ def load_config() -> dict:
 # OUTPUT
 # =========================
 
+def get_result_file(
+    config: dict
+) -> Path:
+
+    raw_path = (
+        config.get("analysis_result_path")
+        or config.get("analysis_result")
+        or config.get("analysis_result_file")
+        or config.get("result_path")
+        or config.get("result_file")
+    )
+
+    if raw_path:
+
+        return Path(
+            raw_path
+        )
+
+    return DEFAULT_RESULT_FILE
+
+
 def save_result(
-    result: dict
+    result: dict,
+    result_file: Path
 ):
 
-    RESULT_FILE.parent.mkdir(
+    result_file.parent.mkdir(
         parents=True,
         exist_ok=True
     )
 
-    with RESULT_FILE.open(
+    with result_file.open(
         "w",
         encoding="utf-8"
     ) as file:
@@ -680,8 +712,15 @@ def main():
         )
     }
 
+    result_file = Path(
+        config[
+            "analysis_result_path"
+        ]
+    )
+
     save_result(
-        result
+        result,
+        result_file
     )
 
     print_success(
@@ -713,7 +752,7 @@ def main():
         f"{Colors.GRAY}"
         "  Result:"
         f"{Colors.RESET}"
-        f" {RESULT_FILE}"
+        f" {result_file}"
     )
 
     print()
