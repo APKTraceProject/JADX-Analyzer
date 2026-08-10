@@ -1,6 +1,0 @@
-{
-    "apk_path": "C:\\path\\to\\application.apk",
-    "jadx_path": "C:\\path\\to\\jadx\\bin\\jadx.bat",
-    "output_dir": "C:\\path\\to\\jadx_output",
-    "analysis_result_path": "C:\\path\\to\\output\\analysis_result.json"
-}

@@ -1,0 +1,4 @@
+apk_path: "path/to/target.apk"
+jadx_path: "path/to/jadx"
+output_dir: "output/decompiled"
+analysis_result_path: "output/analysis_result.json"

@@ -1,11 +1,5 @@
-config.json
-
+__pycache__
+output/
 *.apk
-
-jadx_output/
-
-output/analysis_result.json
-
-__pycache__/
-modules/__pycache__/
-README.md
+.vscode/
+config/cli_config.yaml

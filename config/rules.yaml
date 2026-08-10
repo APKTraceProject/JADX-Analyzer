@@ -1,0 +1,270 @@
+[
+  {
+    "id": "camera_access",
+    "name": "Camera Access",
+    "category": "sensitive_api",
+    "priority": "medium",
+    "permissions": ["android.permission.CAMERA"],
+    "patterns": [
+      {"pattern": "\\bCameraManager\\b", "evidence": "CameraManager reference"},
+      {"pattern": "\\bCameraDevice\\b", "evidence": "CameraDevice reference"},
+      {"pattern": "\\bopenCamera\\s*\\(", "evidence": "Camera open operation"}
+    ]
+  },
+  {
+    "id": "microphone_access",
+    "name": "Microphone Access",
+    "category": "sensitive_api",
+    "priority": "medium",
+    "permissions": ["android.permission.RECORD_AUDIO"],
+    "patterns": [
+      {"pattern": "\\bMediaRecorder\\b", "evidence": "MediaRecorder reference"},
+      {"pattern": "\\bAudioRecord\\b", "evidence": "AudioRecord reference"},
+      {"pattern": "\\bsetAudioSource\\s*\\(", "evidence": "Audio source configuration"},
+      {"pattern": "\\bstartRecording\\s*\\(", "evidence": "Audio recording operation"}
+    ]
+  },
+  {
+    "id": "location_access",
+    "name": "Location Access",
+    "category": "sensitive_api",
+    "priority": "medium",
+    "permissions": [
+      "android.permission.ACCESS_FINE_LOCATION",
+      "android.permission.ACCESS_COARSE_LOCATION"
+    ],
+    "patterns": [
+      {"pattern": "\\bLocationManager\\b", "evidence": "LocationManager reference"},
+      {"pattern": "\\bFusedLocationProviderClient\\b", "evidence": "Fused location client reference"},
+      {"pattern": "\\bgetLastKnownLocation\\s*\\(", "evidence": "Last known location request"},
+      {"pattern": "\\brequestLocationUpdates\\s*\\(", "evidence": "Location update request"}
+    ]
+  },
+  {
+    "id": "contacts_access",
+    "name": "Contacts Access",
+    "category": "sensitive_api",
+    "priority": "medium",
+    "permissions": [
+      "android.permission.READ_CONTACTS",
+      "android.permission.WRITE_CONTACTS",
+      "android.permission.READ_PROFILE",
+      "android.permission.WRITE_PROFILE"
+    ],
+    "patterns": [
+      {"pattern": "\\bContactsContract\\b", "evidence": "ContactsContract reference"},
+      {"pattern": "\\bRawContacts\\b", "evidence": "Raw contacts reference"},
+      {"pattern": "\\bCommonDataKinds\\b", "evidence": "Contact data type reference"}
+    ]
+  },
+  {
+    "id": "sms_access",
+    "name": "SMS Access",
+    "category": "sensitive_api",
+    "priority": "high",
+    "permissions": [
+      "android.permission.SEND_SMS",
+      "android.permission.READ_SMS",
+      "android.permission.RECEIVE_SMS"
+    ],
+    "patterns": [
+      {"pattern": "\\bSmsManager\\b", "evidence": "SmsManager reference"},
+      {"pattern": "\\bsendTextMessage\\s*\\(", "evidence": "SMS sending operation"},
+      {"pattern": "\\bsendMultipartTextMessage\\s*\\(", "evidence": "Multipart SMS sending operation"}
+    ]
+  },
+  {
+    "id": "phone_access",
+    "name": "Phone and Telephony Access",
+    "category": "sensitive_api",
+    "priority": "medium",
+    "permissions": [
+      "android.permission.CALL_PHONE",
+      "android.permission.READ_PHONE_STATE",
+      "android.permission.READ_PHONE_NUMBERS"
+    ],
+    "patterns": [
+      {"pattern": "\\bTelephonyManager\\b", "evidence": "TelephonyManager reference"},
+      {"pattern": "\\bTelecomManager\\b", "evidence": "TelecomManager reference"},
+      {"pattern": "\\bACTION_CALL\\b", "evidence": "Phone call intent"},
+      {"pattern": "\\bplaceCall\\s*\\(", "evidence": "Phone call operation"}
+    ]
+  },
+  {
+    "id": "account_access",
+    "name": "Account Access",
+    "category": "sensitive_api",
+    "priority": "medium",
+    "permissions": ["android.permission.GET_ACCOUNTS"],
+    "patterns": [
+      {"pattern": "\\bAccountManager\\b", "evidence": "AccountManager reference"},
+      {"pattern": "\\bgetAccounts\\s*\\(", "evidence": "Account enumeration operation"},
+      {"pattern": "\\bgetAccountsByType\\s*\\(", "evidence": "Account type enumeration"}
+    ]
+  },
+  {
+    "id": "webview_javascript",
+    "name": "WebView JavaScript Enabled",
+    "category": "webview",
+    "priority": "medium",
+    "permissions": [],
+    "patterns": [
+      {"pattern": "\\bsetJavaScriptEnabled\\s*\\(\\s*true\\s*\\)", "evidence": "WebView JavaScript enabled"}
+    ]
+  },
+  {
+    "id": "webview_file_access",
+    "name": "WebView File Access",
+    "category": "webview",
+    "priority": "medium",
+    "permissions": [],
+    "patterns": [
+      {"pattern": "\\bsetAllowFileAccess\\s*\\(\\s*true\\s*\\)", "evidence": "WebView file access enabled"},
+      {"pattern": "\\bsetAllowContentAccess\\s*\\(\\s*true\\s*\\)", "evidence": "WebView content access enabled"}
+    ]
+  },
+  {
+    "id": "webview_file_url_access",
+    "name": "WebView File URL Access",
+    "category": "webview",
+    "priority": "high",
+    "permissions": [],
+    "patterns": [
+      {"pattern": "\\bsetAllowFileAccessFromFileURLs\\s*\\(\\s*true\\s*\\)", "evidence": "File URL access enabled"},
+      {"pattern": "\\bsetAllowUniversalAccessFromFileURLs\\s*\\(\\s*true\\s*\\)", "evidence": "Universal file URL access enabled"}
+    ]
+  },
+  {
+    "id": "webview_javascript_interface",
+    "name": "WebView JavaScript Interface",
+    "category": "webview",
+    "priority": "high",
+    "permissions": [],
+    "patterns": [
+      {"pattern": "\\baddJavascriptInterface\\s*\\(", "evidence": "Java object exposed to WebView"}
+    ]
+  },
+  {
+    "id": "webview_debugging",
+    "name": "WebView Debugging Enabled",
+    "category": "webview",
+    "priority": "medium",
+    "permissions": [],
+    "patterns": [
+      {"pattern": "\\bsetWebContentsDebuggingEnabled\\s*\\(\\s*true\\s*\\)", "evidence": "WebView debugging enabled"}
+    ]
+  },
+  {
+    "id": "network_communication",
+    "name": "Network Communication",
+    "category": "network",
+    "priority": "low",
+    "permissions": ["android.permission.INTERNET"],
+    "patterns": [
+      {"pattern": "\\bHttpURLConnection\\b", "evidence": "HTTP connection API"},
+      {"pattern": "\\bHttpsURLConnection\\b", "evidence": "HTTPS connection API"},
+      {"pattern": "\\bOkHttpClient\\b", "evidence": "OkHttp client reference"},
+      {"pattern": "\\bRetrofit\\b", "evidence": "Retrofit reference"},
+      {"pattern": "\\bWebSocket\\b", "evidence": "WebSocket reference"},
+      {"pattern": "\\bDatagramSocket\\b", "evidence": "Datagram socket reference"}
+    ]
+  },
+  {
+    "id": "runtime_command_execution",
+    "name": "Runtime Command Execution",
+    "category": "runtime_execution",
+    "priority": "high",
+    "permissions": [],
+    "patterns": [
+      {"pattern": "\\bRuntime\\.getRuntime\\s*\\(\\s*\\)\\s*\\.exec\\s*\\(", "evidence": "Runtime command execution"},
+      {"pattern": "\\bnew\\s+ProcessBuilder\\s*\\(", "evidence": "ProcessBuilder creation"}
+    ]
+  },
+  {
+    "id": "dynamic_code_loading",
+    "name": "Dynamic Code Loading",
+    "category": "dynamic_loading",
+    "priority": "high",
+    "permissions": [],
+    "patterns": [
+      {"pattern": "\\bnew\\s+DexClassLoader\\s*\\(", "evidence": "DexClassLoader instantiation"},
+      {"pattern": "\\bnew\\s+PathClassLoader\\s*\\(", "evidence": "PathClassLoader instantiation"},
+      {"pattern": "\\bnew\\s+InMemoryDexClassLoader\\s*\\(", "evidence": "In-memory DEX loader instantiation"}
+    ]
+  },
+  {
+    "id": "reflection",
+    "name": "Java Reflection",
+    "category": "reflection",
+    "priority": "low",
+    "permissions": [],
+    "patterns": [
+      {"pattern": "\\bClass\\.forName\\s*\\(", "evidence": "Dynamic class lookup"},
+      {"pattern": "\\bgetDeclaredMethod\\s*\\(", "evidence": "Reflective method lookup"},
+      {"pattern": "\\bgetDeclaredField\\s*\\(", "evidence": "Reflective field lookup"},
+      {"pattern": "\\bgetDeclaredConstructor\\s*\\(", "evidence": "Reflective constructor lookup"},
+      {"pattern": "\\.invoke\\s*\\(", "evidence": "Reflective invocation candidate"}
+    ]
+  },
+  {
+    "id": "custom_tls",
+    "name": "Custom TLS Handling",
+    "category": "tls",
+    "priority": "medium",
+    "permissions": [],
+    "patterns": [
+      {"pattern": "\\bnew\\s+X509TrustManager\\s*\\(", "evidence": "Custom X509TrustManager"},
+      {"pattern": "\\bsetHostnameVerifier\\s*\\(", "evidence": "Custom hostname verifier"},
+      {"pattern": "\\bcheckServerTrusted\\s*\\(", "evidence": "Custom certificate validation"},
+      {"pattern": "\\bHostnameVerifier\\b", "evidence": "HostnameVerifier reference"}
+    ]
+  },
+  {
+    "id": "cryptographic_operations",
+    "name": "Cryptographic Operations",
+    "category": "cryptography",
+    "priority": "low",
+    "permissions": [],
+    "patterns": [
+      {"pattern": "\\bCipher\\.getInstance\\s*\\(", "evidence": "Cipher creation"},
+      {"pattern": "\\bMessageDigest\\.getInstance\\s*\\(", "evidence": "Message digest creation"},
+      {"pattern": "\\bMac\\.getInstance\\s*\\(", "evidence": "MAC creation"},
+      {"pattern": "\\bSecretKeySpec\\b", "evidence": "Secret key specification"}
+    ]
+  },
+  {
+    "id": "accessibility_service",
+    "name": "Accessibility Service Usage",
+    "category": "privileged_behavior",
+    "priority": "high",
+    "permissions": [],
+    "patterns": [
+      {"pattern": "\\bclass\\s+\\w+\\s+extends\\s+AccessibilityService\\b", "evidence": "Class extends AccessibilityService"},
+      {"pattern": "\\bperformGlobalAction\\s*\\(", "evidence": "Accessibility global action"}
+    ]
+  },
+  {
+    "id": "overlay_window",
+    "name": "Overlay Window Usage",
+    "category": "privileged_behavior",
+    "priority": "high",
+    "permissions": ["android.permission.SYSTEM_ALERT_WINDOW"],
+    "patterns": [
+      {"pattern": "\\bTYPE_APPLICATION_OVERLAY\\b", "evidence": "Application overlay window type"},
+      {"pattern": "\\bTYPE_SYSTEM_ALERT\\b", "evidence": "System alert window type"},
+      {"pattern": "\\bSYSTEM_ALERT_WINDOW\\b", "evidence": "Overlay permission reference"}
+    ]
+  },
+  {
+    "id": "package_installation",
+    "name": "Package Installation",
+    "category": "privileged_behavior",
+    "priority": "high",
+    "permissions": ["android.permission.REQUEST_INSTALL_PACKAGES"],
+    "patterns": [
+      {"pattern": "\\bPackageInstaller\\b", "evidence": "PackageInstaller reference"},
+      {"pattern": "\\bACTION_INSTALL_PACKAGE\\b", "evidence": "Package installation intent"},
+      {"pattern": "\\bREQUEST_INSTALL_PACKAGES\\b", "evidence": "Package installation permission"}
+    ]
+  }
+]
