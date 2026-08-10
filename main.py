@@ -495,10 +495,12 @@ def main():
         f"{apk_info['package_name']}"
     )
 
-    print_info(
-        f"Version: "
-        f"{apk_info['version_name']}"
-    )
+    if "version_name" in apk_info:
+
+        print_info(
+            f"Version: "
+            f"{apk_info['version_name']}"
+        )
 
     # ---------------------
     # Permissions
@@ -700,10 +702,6 @@ def main():
         "jadx": jadx_result,
 
         "apk_info": apk_info,
-
-        "permissions": permissions,
-
-        "components": components,
 
         "network": network,
 

@@ -145,36 +145,6 @@ def _extract_manifest_info(
 
     root = tree.getroot()
 
-    uses_sdk = root.find(
-        "uses-sdk"
-    )
-
-    min_sdk = None
-    target_sdk = None
-
-    if uses_sdk is not None:
-
-        min_sdk = _convert_number(
-            _get_android_attribute(
-                uses_sdk,
-                "minSdkVersion"
-            )
-        )
-
-        target_sdk = _convert_number(
-            _get_android_attribute(
-                uses_sdk,
-                "targetSdkVersion"
-            )
-        )
-
-    compile_sdk = _convert_number(
-        _get_android_attribute(
-            root,
-            "compileSdkVersion"
-        )
-    )
-
     return {
         "package_name": (
             root.get("package")
@@ -184,29 +154,7 @@ def _extract_manifest_info(
             _get_application_name(
                 root
             )
-        ),
-
-        "version_name": (
-            _get_android_attribute(
-                root,
-                "versionName"
-            )
-        ),
-
-        "version_code": (
-            _convert_number(
-                _get_android_attribute(
-                    root,
-                    "versionCode"
-                )
-            )
-        ),
-
-        "min_sdk": min_sdk,
-
-        "target_sdk": target_sdk,
-
-        "compile_sdk": compile_sdk
+        )
     }
 
 
@@ -360,36 +308,6 @@ def get_apk_info(
         "app_name": (
             manifest_info[
                 "app_name"
-            ]
-        ),
-
-        "version_name": (
-            manifest_info[
-                "version_name"
-            ]
-        ),
-
-        "version_code": (
-            manifest_info[
-                "version_code"
-            ]
-        ),
-
-        "min_sdk": (
-            manifest_info[
-                "min_sdk"
-            ]
-        ),
-
-        "target_sdk": (
-            manifest_info[
-                "target_sdk"
-            ]
-        ),
-
-        "compile_sdk": (
-            manifest_info[
-                "compile_sdk"
             ]
         ),
 
